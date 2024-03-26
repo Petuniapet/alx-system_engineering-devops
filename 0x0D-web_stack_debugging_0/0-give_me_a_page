@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# This script fixes Apache server to serve a page containing "Hello Holberton"
+
+# Install Apache server
+apt-get update
+apt-get install -y apache2
+
+# Create index.html file with "Hello Holberton" content
+echo "Hello Holberton" > /var/www/html/index.html
+
+# Restart Apache server
+service apache2 restart
