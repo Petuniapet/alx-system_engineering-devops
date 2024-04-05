@@ -33,19 +33,23 @@ defaults
         errorfile 503 /etc/haproxy/errors/503.http
         errorfile 504 /etc/haproxy/errors/504.http
 
-frontend Petuniapet-frontend
-        bind *:80
-        mode http
-        http-request redirect scheme https code 301 unless { ssl_fc }
-        http-request set-header X_Forwarded-Proto http
-        default_backend Petuniapet-backend
+frontend petuniapet-frontend
+    bind *:80
+    mode http
+    http-request redirect scheme https code 301 unless { ssl_fc }
+    http-request set-header X-Forwarded-Proto http
+    default_backend petuniapet.tech.backend
 
-frontend Petuniapet-frontend-https
-        bind *:443 ssl crt /etc/haproxy/certs/Petuniapet.tech.pem
-        http-request set-header X-Forwarded-Proto https
-        default_backend Petuniapet-backend
+frontend petuniapet-frontend-https
+    bind *:443 ssl crt /etc/haproxy/certs/www.petuniapet.tech.pem
+    http-request set-header X-Forwarded-Proto https
+    default_backend petuniapet.tech.backend
 
-backend Petuniapet-backend
-        balance roundrobin
-        server 457867-web-01 54.237.17.150:80 check
-        server 457867-web-02 52.91.152.171:80 check
+backend petuniapet.tech.backend
+    mode http  
+    balance roundrobin  
+    server 457867-web-01 54.237.17.150:80 check
+    server 457867-web-02 52.91.152.171:80 check
+
+#       server 457867-web-01 54.237.17.150:80 check
+#       server 457867-web-02 52.91.152.171:80 check
