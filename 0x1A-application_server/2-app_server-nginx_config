@@ -1,27 +1,34 @@
 server {
     listen 80;
-    listen [::]:80 default_server;
-    add_header X-Served-By $hostname;
-    root   /etc/nginx/html;
-    index  index.html index.htm;
+    listen [::]:80 default_server;  # Listen on IPv6 as well
+
+    add_header X-Served-By $hostname;  # Adding a custom header
+
+    root /var/www/html;  # Set root directory for static files
+
+    index index.html index.htm;  # Define index files to look for
+
+    server_name _;  # Catch-all server name
+
     location /redirect_me {
         return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
     }
-    root /var/www/html;
 
-    server_name _;
-
-    location /airbnb-onepage {
-        proxy_pass http://0.0.0.0:5000/airbnb-onepage;
+    location /airbnb-onepage/ {
+        proxy_pass http://100.26.171.69/;  # Proxy requests to your application server
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
 
-    location /hbnb_static {
-        alias /data/web_static/current/;
+    location /hbnb_static/ {
+        alias /data/web_static/current/;  # Alias for serving static files
     }
 
-    location /{
+    location / {
         # First attempt to serve request as file, then
         # as directory, then fall back to displaying a 404.
         try_files $uri $uri/ =404;
-     }
+    }
 }
